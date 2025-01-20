@@ -1,66 +1,178 @@
-import Image from 'next/image'
-import Link from 'next/link'
+"use client"
+
+import { useState, useEffect } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import SearchBar from "./components/SearchBar"
+import dynamic from "next/dynamic"
+
+const DynamicSlider = dynamic(() => import("react-slick"), { ssr: false })
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false)
+
+  const services = [
+    {
+      title: "Bridal Makeup",
+      description: "Make your special day unforgettable with our expert bridal makeup services.",
+    },
+    {
+      title: "Special Event Makeup",
+      description: "Look stunning for any occasion with our tailored special event makeup.",
+    },
+    {
+      title: "Photoshoot Makeup",
+      description: "Camera-ready looks that capture your best self for any photoshoot.",
+    },
+  ]
+
+  const recentTransformations = [
+    { src: "/a.jpg", alt: "Bridal Makeup Transformation" },
+    { src: "/z5.jpg", alt: "Special Event Makeup Transformation" },
+    { src: "/z2.jpg", alt: "Photoshoot Makeup Transformation" },
+    { src: "/z4.jpg", alt: "Avant-Garde Makeup Transformation" },
+  ]
+
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  }
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   return (
-    <div>
-      <section className="relative h-screen">
-        <Image
-          src="/logo.jpg"
-          alt="Hero Image"
-          layout="fill"
-          objectFit="cover"
-          quality={100}
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="text-center text-white">
-            <h1 className="text-5xl font-bold mb-4">DazzleDolls</h1>
-            <p className="text-2xl mb-8">Professional Makeup Artist</p>
-            <Link href="/contact" className="bg-pink-500 text-white px-6 py-3 rounded-full hover:bg-pink-600 transition duration-300">
-              Book Now
-            </Link>
+    <div className="bg-champagne-50">
+      {/* Hero section */}
+      <section className="relative h-screen bg-gradient-to-br from-rose-100 to-pink-200">
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <div className="text-center mb-8">
+            <h1 className="text-6xl font-bold mb-4 text-plum-800 font-playfair">DazzleDolls</h1>
+            <p className="text-2xl mb-8 text-plum-600 font-lato">Professional Makeup Artistry</p>
           </div>
+          <SearchBar />
+          <Link
+            href="/contact"
+            className="mt-8 bg-rose-gold text-white px-8 py-4 rounded-full hover:bg-rose-gold-600 transition duration-300 text-lg font-semibold font-lato"
+          >
+            Book Now
+          </Link>
         </div>
       </section>
 
-      <section className="py-16 bg-white">
+      {/* Services section */}
+      <section className="py-24 bg-white">
         <div className="container mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-8">Featured Services</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {['Bridal Makeup', 'Special Event Makeup', 'Photoshoot Makeup'].map((service, index) => (
-              <div key={index} className="bg-gray-100 p-6 rounded-lg text-center">
-                <h3 className="text-xl font-semibold mb-4">{service}</h3>
-                <p className="mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                <Link href="/services" className="text-pink-500 hover:underline">Learn More</Link>
+          <h2 className="text-4xl font-bold text-center mb-16 text-plum-800 font-playfair">Our Signature Services</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {services.map((service, index) => (
+              <div
+                key={index}
+                className="bg-champagne-100 p-8 rounded-lg text-center shadow-lg transition-transform duration-300 hover:scale-105"
+              >
+                <h3 className="text-2xl font-semibold mb-4 text-plum-700 font-playfair">{service.title}</h3>
+                <p className="mb-6 text-charcoal-600 font-lato">{service.description}</p>
+                <Link
+                  href="/services"
+                  className="text-rose-gold hover:text-rose-gold-600 font-semibold font-lato transition duration-300"
+                >
+                  Discover More
+                </Link>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-16 bg-gray-100">
+      {/* Recent Transformations section */}
+      <section className="py-24 bg-champagne-100">
         <div className="container mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-8">Recent Work</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((_, index) => (
-              <div key={index} className="relative aspect-square">
-                <Image
-                  src="/placeholder.svg"
-                  alt={`Gallery Image ${index + 1}`}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-lg"
-                />
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-8">
-            <Link href="/gallery" className="bg-pink-500 text-white px-6 py-3 rounded-full hover:bg-pink-600 transition duration-300">
-              View Gallery
+          <h2 className="text-4xl font-bold text-center mb-16 text-plum-800 font-playfair">Recent Transformations</h2>
+          {mounted && (
+            <>
+              <DynamicSlider {...sliderSettings}>
+                {recentTransformations.map((image, index) => (
+                  <div key={index} className="px-2">
+                    <div className="relative aspect-square rounded-lg overflow-hidden shadow-lg">
+                      <Image
+                        src={image.src || "/placeholder.svg"}
+                        alt={image.alt}
+                        fill
+                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
+                        style={{ objectFit: "cover" }}
+                        className="rounded-lg"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </DynamicSlider>
+              <link
+                rel="stylesheet"
+                type="text/css"
+                charSet="UTF-8"
+                href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css"
+              />
+              <link
+                rel="stylesheet"
+                type="text/css"
+                href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
+              />
+            </>
+          )}
+          <div className="text-center mt-12">
+            <Link
+              href="/gallery"
+              className="bg-rose-gold text-white px-8 py-4 rounded-full hover:bg-rose-gold-600 transition duration-300 text-lg font-semibold font-lato"
+            >
+              Explore Our Gallery
             </Link>
           </div>
         </div>
       </section>
+
+      {/* Schema markup */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BeautySalon",
+          name: "DazzleDolls Makeup Artistry",
+          image: "https://www.dazzledolls.co.uk/logo.jpg",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "123 Makeup Street",
+            addressLocality: "Your City",
+            addressRegion: "Your Region",
+            postalCode: "12345",
+            addressCountry: "United Kingdom",
+          },
+          telephone: "+1-234-567-8901",
+          url: "https://dazzledolls.co.uk",
+          priceRange: "$$",
+        })}
+      </script>
     </div>
   )
 }
+

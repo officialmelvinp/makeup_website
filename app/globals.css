@@ -1,15 +1,87 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --color-champagne-50: #fff9f5;
+  --color-champagne-100: #fff0e0;
+  --color-plum-600: #6d2e46;
+  --color-plum-700: #5a2639;
+  --color-plum-800: #4a1e2e;
+  --color-charcoal-600: #4a4a4a;
+  --color-rose-gold: #b76e79;
+  --color-rose-gold-600: #a25965;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+  color: var(--color-charcoal-600);
+  background-color: var(--color-champagne-50);
+  font-family: "Lato", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Playfair Display", serif;
+  color: var(--color-plum-800);
+}
+
+.font-playfair {
+  font-family: "Playfair Display", serif;
+}
+
+.font-lato {
+  font-family: "Lato", sans-serif;
+}
+
+.text-plum-600 {
+  color: var(--color-plum-600);
+}
+
+.text-plum-700 {
+  color: var(--color-plum-700);
+}
+
+.text-plum-800 {
+  color: var(--color-plum-800);
+}
+
+.text-charcoal-600 {
+  color: var(--color-charcoal-600);
+}
+
+.bg-rose-gold {
+  background-color: var(--color-rose-gold);
+}
+
+.bg-rose-gold-600 {
+  background-color: var(--color-rose-gold-600);
+}
+
+.text-rose-gold {
+  color: var(--color-rose-gold);
+}
+
+.hover\:text-rose-gold-600:hover {
+  color: var(--color-rose-gold-600);
+}
+
+.bg-champagne-50 {
+  background-color: var(--color-champagne-50);
+}
+
+.bg-champagne-100 {
+  background-color: var(--color-champagne-100);
+}
+
+.disabled-slot {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 

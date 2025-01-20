@@ -1,23 +1,23 @@
-import './globals.css'
-import Header from './components/Header'
-import Footer from './components/Footer'
-import { Inter } from 'next/font/google'
+import "./globals.css"
+import { Inter } from "next/font/google"
+import Header from "./components/Header"
+import Footer from "./components/Footer"
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: 'Your Makeup Artist',
-  description: 'Professional Makeup Artist Services',
+  title: "DazzleDolls - Professional Makeup Artistry in London",
+  description:
+    "Transform your look with DazzleDolls. Expert makeup services for weddings, special events, and photoshoots in [Your City]. Book your appointment today!",
+  keywords: "makeup artist, bridal makeup, special event makeup, photoshoot makeup, London",
 }
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`flex flex-col min-h-screen bg-neutral-50 ${inter.className}`}>
+    <html lang="en" className={inter.className}>
+      <body className="flex flex-col min-h-screen">
         <Header />
-        <main className="flex-grow">
-          {children}
-        </main>
+        <main className="flex-grow pt-16">{children}</main>
         <Footer />
       </body>
     </html>

@@ -16,6 +16,7 @@ export default function Footer() {
             <Link href="/services" className="hover:text-pink-200 transition-colors duration-300">Services</Link>
             <Link href="/gallery" className="hover:text-pink-200 transition-colors duration-300">Gallery</Link>
             <Link href="/contact" className="hover:text-pink-200 transition-colors duration-300">Contact</Link>
+            <Link href="/prices" className="hover:text-pink-200 transition-colors duration-300">Prices</Link>
           </div>
           <div className="flex space-x-4">
             <a href="#" className="text-white hover:text-pink-200 transition-colors duration-300">
