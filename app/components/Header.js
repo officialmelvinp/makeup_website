@@ -29,9 +29,9 @@ export default function Header() {
       <nav className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
           <Link href="/" className="flex items-center">
-            <Image src="/logo.jpg" alt="DazzleDolls Logo" width={150} height={50} style={{ objectFit: "contain" }} />
+            <Image src="/logo.jpeg" alt="DolapoUdekwe Logo" width={150} height={50} style={{ objectFit: "contain" }} />
             <span className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 ml-4">
-              DazzleDolls
+              DolapoUdekwe
             </span>
           </Link>
           <div className="hidden md:flex space-x-6">

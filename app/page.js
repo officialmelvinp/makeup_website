@@ -66,19 +66,50 @@ export default function Home() {
   return (
     <div className="bg-champagne-50">
       {/* Hero section */}
-      <section className="relative h-screen bg-gradient-to-br from-rose-100 to-pink-200">
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className="text-center mb-8">
-            <h1 className="text-6xl font-bold mb-4 text-plum-800 font-playfair">DazzleDolls</h1>
-            <p className="text-2xl mb-8 text-plum-600 font-lato">Professional Makeup Artistry</p>
+      <section className="py-20 bg-gradient-to-br from-rose-100 to-pink-200">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-center">
+            <div className="md:w-1/2 mb-8 md:mb-0 pt-8">
+              <Image
+                src="/sub1.jpg"
+                alt="Dolapo Udekwe - Professional Makeup Artist"
+                width={600}
+                height={600}
+                className="rounded-lg shadow-xl"
+              />
+            </div>
+            <div className="md:w-1/2 md:pl-12">
+              <h1 className="text-5xl font-bold mb-4 text-plum-800 font-playfair">Dolapo Udekwe</h1>
+              <p className="text-2xl mb-6 text-plum-600 font-lato">Professional Makeup Artistry</p>
+              <p className="text-lg mb-8 text-charcoal-600 font-lato">
+                Transform your look with expert makeup artistry. Whether it's for your wedding day, a special event, or
+                a professional photoshoot, I'm here to enhance your natural beauty and make you feel confident and
+                radiant.
+              </p>
+              <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                <Link
+                  href="/contact"
+                  className="bg-rose-gold text-white px-8 py-4 rounded-full hover:bg-rose-gold-600 transition duration-300 text-lg font-semibold font-lato text-center"
+                >
+                  Book Now
+                </Link>
+                <Link
+                  href="/gallery"
+                  className="bg-rose-gold text-white px-8 py-4 rounded-full hover:bg-rose-gold-600 transition duration-300 text-lg font-semibold font-lato text-center"
+                >
+                  Explore Gallery
+                </Link>
+              </div>
+            </div>
           </div>
+        </div>
+      </section>
+
+      {/* Search Bar section */}
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-6">
+          <h2 className="text-3xl font-bold text-center mb-8 text-plum-800 font-playfair">Find Your Perfect Look</h2>
           <SearchBar />
-          <Link
-            href="/contact"
-            className="mt-8 bg-rose-gold text-white px-8 py-4 rounded-full hover:bg-rose-gold-600 transition duration-300 text-lg font-semibold font-lato"
-          >
-            Book Now
-          </Link>
         </div>
       </section>
 
@@ -153,25 +184,42 @@ export default function Home() {
       </section>
 
       {/* Schema markup */}
-      <script type="application/ld+json">
-        {JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BeautySalon",
-          name: "DazzleDolls Makeup Artistry",
-          image: "https://www.dazzledolls.co.uk/logo.jpg",
-          address: {
-            "@type": "PostalAddress",
-            streetAddress: "123 Makeup Street",
-            addressLocality: "Your City",
-            addressRegion: "Your Region",
-            postalCode: "12345",
-            addressCountry: "United Kingdom",
-          },
-          telephone: "+1-234-567-8901",
-          url: "https://dazzledolls.co.uk",
-          priceRange: "$$",
-        })}
-      </script>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BeautySalon",
+            name: "DolapoUdekwe Professional Makeup Artistry",
+            image: "https://www.dolapoudekwe.com/logo.jpeg",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: "123 Makeup Street",
+              addressLocality: "Purfleet",
+              addressRegion: "Essex",
+              postalCode: "RM19 1ZZ",
+              addressCountry: "GB",
+            },
+            geo: {
+              "@type": "GeoCoordinates",
+              latitude: "51.4839",
+              longitude: "0.2380",
+            },
+            url: "https://www.dolapoudekwe.com",
+            telephone: "+44-7445-544-254",
+            priceRange: "££",
+            openingHoursSpecification: [
+              {
+                "@type": "OpeningHoursSpecification",
+                dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                opens: "09:00",
+                closes: "23:59",
+              },
+            ],
+            servesCuisine: "Makeup Services",
+          }),
+        }}
+      />
     </div>
   )
 }

@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="container mx-auto px-6 py-8">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
-            <h2 className="text-2xl font-bold mb-2">DazzleDolls</h2>
+            <h2 className="text-2xl font-bold mb-2">DolapoUdekwe</h2>
             <p className="text-sm opacity-75">Transforming faces, enhancing beauty</p>
           </div>
           <div className="flex flex-wrap justify-center md:justify-end space-x-4 mb-4 md:mb-0">
@@ -31,7 +31,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-pink-400 mt-8 pt-8 text-sm text-center opacity-75">
-          &copy; {new Date().getFullYear()} DazzleDolls. All rights reserved.
+          &copy; {new Date().getFullYear()} DolapoUdekwe. All rights reserved.
         </div>
       </div>
     </footer>

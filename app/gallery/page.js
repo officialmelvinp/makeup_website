@@ -1,15 +1,15 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { FiX, FiChevronLeft, FiChevronRight, FiShare2 } from "react-icons/fi"
-import { useSearchParams } from "next/navigation"
 import Masonry from "react-masonry-css"
 import InfiniteScroll from "react-infinite-scroll-component"
 import { ReactCompareSlider, ReactCompareSliderImage } from "react-compare-slider"
 
-export default function Gallery() {
+function GalleryContent() {
   const searchParams = useSearchParams()
   const searchQuery = searchParams.get("q")
 
@@ -265,6 +265,14 @@ export default function Gallery() {
         )}
       </AnimatePresence>
     </div>
+  )
+}
+
+export default function Gallery() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <GalleryContent />
+    </Suspense>
   )
 }
 
