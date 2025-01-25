@@ -4,41 +4,52 @@ import { useState, useEffect } from "react"
 import { Calendar, momentLocalizer } from "react-big-calendar"
 import moment from "moment"
 import "react-big-calendar/lib/css/react-big-calendar.css"
-import { FaWhatsapp } from "react-icons/fa"
+import { parseISO, format } from "date-fns"
+import AdminLoginForm from "@/app/components/AdminLoginForm"
+import EventListView from "@/app/components/EventListView"
+import EventDetailsModal from "@/app/components/EventDetailsModal"
+import ChangePasswordModal from "@/app/components/AdminChangePasswordModal"
+import { LogOut, Key, Trash2 } from "lucide-react"
 
 const localizer = momentLocalizer(moment)
 
 export default function AdminPage() {
   const [events, setEvents] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
-  const [view, setView] = useState("calendar") // 'calendar' or 'list'
   const [selectedEvent, setSelectedEvent] = useState(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false)
 
-  const handleLogin = async (e) => {
-    e.preventDefault()
-    try {
-      const response = await fetch("/api/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      })
-      const data = await response.json()
-      if (data.success) {
-        setIsAuthenticated(true)
-      } else {
-        setError("Invalid credentials")
+  useEffect(() => {
+    checkAuthentication()
+  }, [])
+
+  const checkAuthentication = async () => {
+    const token = localStorage.getItem("adminToken")
+    if (token) {
+      try {
+        const response = await fetch("/api/auth", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        if (response.ok) {
+          setIsAuthenticated(true)
+          fetchEvents()
+        } else {
+          setIsAuthenticated(false)
+        }
+      } catch (error) {
+        console.error("Error checking authentication:", error)
+        setIsAuthenticated(false)
       }
-    } catch (err) {
-      setError("Login failed")
+    } else {
+      setIsAuthenticated(false)
     }
   }
 
   const fetchEvents = async () => {
-    if (!isAuthenticated) return
     try {
       const response = await fetch("/api/events")
       if (!response.ok) {
@@ -46,223 +57,129 @@ export default function AdminPage() {
       }
       const data = await response.json()
       setEvents(
-        data.map((event) => ({
-          ...event,
-          start: new Date(event.start),
-          end: new Date(event.start),
-          title: `${event.service_type} - ${event.client_name}`,
-        })),
+        data.map((event) => {
+          const eventStart = parseISO(event.start)
+          const eventEnd = moment(eventStart).add(2, "hours").toDate()
+          return {
+            ...event,
+            start: eventStart,
+            end: eventEnd,
+            title: `${event.service_type} - ${event.client_name}`,
+          }
+        }),
       )
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setIsLoading(false)
+    } catch (error) {
+      console.error("Error fetching events:", error)
     }
   }
 
-  useEffect(() => {
-    fetchEvents()
-  }, [isAuthenticated])
+  const handleSelectEvent = (event) => {
+    setSelectedEvent(event)
+    setIsModalOpen(true)
+  }
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this booking?")) {
+  const handleLogout = () => {
+    localStorage.removeItem("adminToken")
+    setIsAuthenticated(false)
+    setEvents([])
+  }
+
+  const handleChangePassword = () => {
+    setIsChangePasswordModalOpen(true)
+  }
+
+  const handleDeleteEvent = async (eventId) => {
+    if (window.confirm("Are you sure you want to delete this event?")) {
       try {
-        const response = await fetch("/api/events", {
+        const response = await fetch(`/api/events/${eventId}`, {
           method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id }),
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
+          },
         })
-        if (!response.ok) {
-          throw new Error("Failed to delete booking")
+        if (response.ok) {
+          setEvents(events.filter((event) => event.id !== eventId))
+          setIsModalOpen(false)
+        } else {
+          const errorData = await response.json()
+          throw new Error(errorData.error || "Failed to delete event")
         }
-        await fetchEvents() // Refresh the events list
-        setSelectedEvent(null)
-      } catch (err) {
-        setError(err.message)
+      } catch (error) {
+        console.error("Error deleting event:", error)
+        alert("Failed to delete event. Please try again.")
       }
     }
   }
 
-  const handleEventSelect = (event) => {
-    setSelectedEvent(event)
-  }
-
-  const generateWhatsAppLink = (phoneNumber, name, date) => {
-    const formattedDate = new Date(date).toLocaleString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-    })
-    const message = `Hello ${name}, this is a reminder for your makeup appointment on ${formattedDate}. We're looking forward to seeing you! If you need to reschedule, please let us know.`
-    return `https://wa.me/${phoneNumber.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`
-  }
-
   if (!isAuthenticated) {
     return (
-      <div className="container mx-auto px-4 py-8 mt-20">
-        <h1 className="text-3xl font-bold mb-6">Admin Login</h1>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label htmlFor="username" className="block mb-1">
-              Username:
-            </label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block mb-1">
-              Password:
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
-            />
-          </div>
-          <button type="submit" className="bg-rose-gold text-white px-4 py-2 rounded">
-            Login
-          </button>
-        </form>
-        {error && <p className="text-red-500 mt-4">{error}</p>}
-      </div>
+      <AdminLoginForm
+        onLoginSuccess={() => {
+          setIsAuthenticated(true)
+          fetchEvents()
+        }}
+      />
     )
   }
 
-  if (isLoading) return <p className="mt-20">Loading...</p>
-  if (error) return <p className="mt-20">Error: {error}</p>
-
   return (
-    <div className="container mx-auto px-4 py-8 mt-20">
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-      <div className="mb-4">
-        <button
-          onClick={() => setView("calendar")}
-          className={`mr-2 px-4 py-2 rounded ${view === "calendar" ? "bg-rose-gold text-white" : "bg-gray-200"}`}
-        >
-          Calendar View
-        </button>
-        <button
-          onClick={() => setView("list")}
-          className={`px-4 py-2 rounded ${view === "list" ? "bg-rose-gold text-white" : "bg-gray-200"}`}
-        >
-          List View
-        </button>
+    <div className="container mx-auto px-6 py-16">
+      <div className="flex justify-between items-center mb-12">
+        <h1 className="text-4xl font-bold text-plum-800 font-playfair">Admin Dashboard</h1>
+        <div className="flex gap-4">
+          <button
+            onClick={handleChangePassword}
+            className="flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          >
+            <Key className="mr-2" size={18} />
+            Change Password
+          </button>
+          <button
+            onClick={handleLogout}
+            className="flex items-center px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+          >
+            <LogOut className="mr-2" size={18} />
+            Logout
+          </button>
+        </div>
       </div>
-      {view === "calendar" ? (
-        <div className="h-[600px]">
-          <Calendar
-            localizer={localizer}
-            events={events}
-            startAccessor="start"
-            endAccessor="end"
-            onSelectEvent={handleEventSelect}
-            style={{ height: "100%" }}
-          />
-        </div>
-      ) : (
-        <ul className="space-y-4">
-          {events.map((event) => (
-            <li key={event.id} className="bg-white shadow rounded-lg p-4">
-              <p>
-                <strong>Date and Time:</strong> {moment(event.start).format("MMMM Do YYYY, h:mm a")}
-              </p>
-              <p>
-                <strong>Service:</strong> {event.service_type}
-              </p>
-              <p>
-                <strong>Client:</strong> {event.client_name}
-              </p>
-              <button
-                onClick={() => handleEventSelect(event)}
-                className="mt-2 bg-rose-gold text-white px-4 py-2 rounded hover:bg-rose-gold-600 transition-colors"
-              >
-                View Details
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      <EventListView
+        events={events}
+        onSelectEvent={handleSelectEvent}
+        onDeleteEvent={handleDeleteEvent}
+        formatEventTime={(event) => format(event.start, "HH:mm")}
+      />
+      <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-lg overflow-hidden mt-8">
+        <Calendar
+          localizer={localizer}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: 600 }}
+          className="p-4"
+          onSelectEvent={handleSelectEvent}
+          formats={{
+            eventTimeRangeFormat: ({ start, end }, culture, localizer) => {
+              return `${format(start, "HH:mm")} - ${format(end, "HH:mm")}`
+            },
+          }}
+        />
+      </div>
       {selectedEvent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-8 rounded-lg max-w-md w-full">
-            <h2 className="text-2xl font-bold mb-4">{selectedEvent.title}</h2>
-            <p>
-              <strong>Date and Time:</strong> {moment(selectedEvent.start).format("MMMM Do YYYY, h:mm a")}
-            </p>
-            <p>
-              <strong>Client Name:</strong> {selectedEvent.client_name}
-            </p>
-            <p>
-              <strong>Client Email:</strong> {selectedEvent.client_email}
-            </p>
-            <p>
-              <strong>Client Phone:</strong> {selectedEvent.client_phone}
-            </p>
-            <p>
-              <strong>Client WhatsApp:</strong>{" "}
-              {selectedEvent.client_whatsapp ? (
-                <a
-                  href={`https://wa.me/${selectedEvent.client_whatsapp.replace(/\D/g, "")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline"
-                >
-                  {selectedEvent.client_whatsapp}
-                </a>
-              ) : (
-                "N/A"
-              )}
-            </p>
-            <p>
-              <strong>Service:</strong> {selectedEvent.service_type}
-            </p>
-            <p>
-              <strong>Notes:</strong> {selectedEvent.notes || "N/A"}
-            </p>
-            <div className="mt-4">
-              {selectedEvent.client_whatsapp && (
-                <a
-                  href={generateWhatsAppLink(
-                    selectedEvent.client_whatsapp,
-                    selectedEvent.client_name,
-                    selectedEvent.start,
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center bg-green-500 text-white px-6 py-3 rounded-full hover:bg-green-600 transition-colors text-lg"
-                >
-                  <FaWhatsapp className="mr-2" />
-                  Send WhatsApp Message
-                </a>
-              )}
-            </div>
-            <div className="mt-4 flex justify-end space-x-2">
-              <button
-                onClick={() => handleDelete(selectedEvent.id)}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
-              >
-                Delete
-              </button>
-              <button
-                onClick={() => setSelectedEvent(null)}
-                className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400 transition-colors"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
+        <EventDetailsModal
+          event={selectedEvent}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onDelete={() => handleDeleteEvent(selectedEvent.id)}
+        />
       )}
+      <ChangePasswordModal
+        isOpen={isChangePasswordModalOpen}
+        onClose={() => setIsChangePasswordModalOpen(false)}
+        onChangePassword={() => {
+          setIsChangePasswordModalOpen(false)
+        }}
+      />
     </div>
   )
 }

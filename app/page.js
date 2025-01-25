@@ -3,13 +3,23 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import SearchBar from "./components/SearchBar"
 import dynamic from "next/dynamic"
 
-const DynamicSlider = dynamic(() => import("react-slick"), { ssr: false })
+const DynamicSlider = dynamic(() => import("react-slick").then((mod) => mod.default), {
+  ssr: false,
+  loading: () => <p>Loading...</p>,
+})
 
 export default function Home() {
   const [mounted, setMounted] = useState(false)
+  const [scrollY, setScrollY] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY)
+    window.addEventListener("scroll", handleScroll)
+    setMounted(true)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   const services = [
     {
@@ -31,6 +41,10 @@ export default function Home() {
     { src: "/z5.jpg", alt: "Special Event Makeup Transformation" },
     { src: "/z2.jpg", alt: "Photoshoot Makeup Transformation" },
     { src: "/z4.jpg", alt: "Avant-Garde Makeup Transformation" },
+    { src: "/twitter.jpg", alt: "Avant-Garde Makeup Transformation" },
+    { src: "/og-image.jpg", alt: "Avant-Garde Makeup Transformation" },
+    { src: "/sub1.jpg", alt: "Avant-Garde Makeup Transformation" },
+    { src: "/sub2.jpg", alt: "Bridal Makeup Transformation" },
   ]
 
   const sliderSettings = {
@@ -59,15 +73,18 @@ export default function Home() {
     ],
   }
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   return (
     <div className="bg-champagne-50">
       {/* Hero section */}
-      <section className="py-20 bg-gradient-to-br from-rose-100 to-pink-200">
-        <div className="container mx-auto px-6">
+      <section
+        className="relative bg-gradient-to-br from-rose-100 to-pink-200 overflow-hidden"
+        style={{
+          minHeight: "100vh",
+          paddingTop: "80px",
+          marginTop: `-${Math.min(scrollY, 80)}px`,
+        }}
+      >
+        <div className="container mx-auto px-6 py-20">
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-8 md:mb-0 pt-8">
               <Image
@@ -82,9 +99,9 @@ export default function Home() {
               <h1 className="text-5xl font-bold mb-4 text-plum-800 font-playfair">Dolapo Udekwe</h1>
               <p className="text-2xl mb-6 text-plum-600 font-lato">Professional Makeup Artistry</p>
               <p className="text-lg mb-8 text-charcoal-600 font-lato">
-                Transform your look with expert makeup artistry. Whether it's for your wedding day, a special event, or
-                a professional photoshoot, I'm here to enhance your natural beauty and make you feel confident and
-                radiant.
+                Transform your look with expert makeup artistry. Whether it&apos;s for your wedding day, a special
+                event, or a professional photoshoot, I&apos;m here to enhance your natural beauty and make you feel
+                confident and radiant.
               </p>
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                 <Link
@@ -102,14 +119,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Search Bar section */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-8 text-plum-800 font-playfair">Find Your Perfect Look</h2>
-          <SearchBar />
         </div>
       </section>
 
@@ -142,35 +151,22 @@ export default function Home() {
         <div className="container mx-auto px-6">
           <h2 className="text-4xl font-bold text-center mb-16 text-plum-800 font-playfair">Recent Transformations</h2>
           {mounted && (
-            <>
-              <DynamicSlider {...sliderSettings}>
-                {recentTransformations.map((image, index) => (
-                  <div key={index} className="px-2">
-                    <div className="relative aspect-square rounded-lg overflow-hidden shadow-lg">
-                      <Image
-                        src={image.src || "/placeholder.svg"}
-                        alt={image.alt}
-                        fill
-                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
-                        style={{ objectFit: "cover" }}
-                        className="rounded-lg"
-                      />
-                    </div>
+            <DynamicSlider {...sliderSettings}>
+              {recentTransformations.map((image, index) => (
+                <div key={index} className="px-2">
+                  <div className="relative aspect-square rounded-lg overflow-hidden shadow-lg">
+                    <Image
+                      src={image.src || "/placeholder.svg"}
+                      alt={image.alt}
+                      fill
+                      sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
+                      style={{ objectFit: "cover" }}
+                      className="rounded-lg"
+                    />
                   </div>
-                ))}
-              </DynamicSlider>
-              <link
-                rel="stylesheet"
-                type="text/css"
-                charSet="UTF-8"
-                href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css"
-              />
-              <link
-                rel="stylesheet"
-                type="text/css"
-                href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css"
-              />
-            </>
+                </div>
+              ))}
+            </DynamicSlider>
           )}
           <div className="text-center mt-12">
             <Link
@@ -191,7 +187,7 @@ export default function Home() {
             "@context": "https://schema.org",
             "@type": "BeautySalon",
             name: "DolapoUdekwe Professional Makeup Artistry",
-            image: "https://www.dolapoudekwe.com/logo.jpeg",
+            image: "https://www.dolapoudekwe.co.uk/logo.jpeg",
             address: {
               "@type": "PostalAddress",
               streetAddress: "123 Makeup Street",
@@ -205,7 +201,7 @@ export default function Home() {
               latitude: "51.4839",
               longitude: "0.2380",
             },
-            url: "https://www.dolapoudekwe.com",
+            url: "https://www.dolapoudekwe.co.uk",
             telephone: "+44-7445-544-254",
             priceRange: "££",
             openingHoursSpecification: [

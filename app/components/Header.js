@@ -5,6 +5,9 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { FaRegMoneyBillAlt } from "react-icons/fa"
+import { Playfair_Display } from "next/font/google"
+
+const playfair = Playfair_Display({ subsets: ["latin"] })
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -22,16 +25,21 @@ export default function Header() {
       className={`fixed w-full z-50 transition-all duration-300 ${
         isScrolled ? "bg-white shadow-lg" : "bg-transparent"
       }`}
-      initial={{ y: -100 }}
+      initial={{ y: 0 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <nav className="container mx-auto px-6 py-4">
+      <nav className="container mx-auto px-4 py-4">
         <div className="flex justify-between items-center">
           <Link href="/" className="flex items-center">
-            <Image src="/logo.jpeg" alt="DolapoUdekwe Logo" width={150} height={50} style={{ objectFit: "contain" }} />
-            <span className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 ml-4">
-              DolapoUdekwe
+            <Image src="/logo.jpeg" alt="DolapoUdekwe Logo" width={100} height={40} style={{ objectFit: "contain" }} />
+            <span className={`${playfair.className} text-2xl font-extrabold ml-2 relative overflow-hidden group`}>
+              <span
+                className={`relative z-10 bg-clip-text text-transparent ${isScrolled ? "bg-gradient-to-r from-pink-500 to-purple-600" : "text-white"}`}
+              >
+                DolapoUdekwe
+              </span>
+              <span className="absolute inset-0 bg-gradient-to-r from-pink-300 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"></span>
             </span>
           </Link>
           <div className="hidden md:flex space-x-6">
@@ -39,7 +47,7 @@ export default function Header() {
               <Link
                 key={item}
                 href={item === "Home" ? "/" : `/${item.toLowerCase().replace(/ /g, "-")}`}
-                className="relative text-lg font-medium text-gray-800 hover:text-pink-500 transition-colors duration-300 flex items-center"
+                className={`relative text-base font-medium ${isScrolled ? "text-gray-800" : "text-white"} hover:text-pink-500 transition-colors duration-300 flex items-center`}
               >
                 {item === "Prices" && <FaRegMoneyBillAlt className="mr-1" />}
                 <span>{item}</span>

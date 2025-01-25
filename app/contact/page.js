@@ -1,10 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Calendar, momentLocalizer } from "react-big-calendar"
 import moment from "moment"
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import { FaWhatsapp } from "react-icons/fa"
+import { parseISO, format } from "date-fns"
 
 const localizer = momentLocalizer(moment)
 
@@ -12,12 +13,13 @@ export default function Contact() {
   const [events, setEvents] = useState([])
   const [selectedDate, setSelectedDate] = useState(null)
   const [selectedTime, setSelectedTime] = useState("")
+  const [availableTimes, setAvailableTimes] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    whatsapp: "", // New field for WhatsApp
+    whatsapp: "",
     service: "",
     message: "",
   })
@@ -25,11 +27,7 @@ export default function Contact() {
   const [bookingConfirmed, setBookingConfirmed] = useState(false)
   const [bookingId, setBookingId] = useState(null)
 
-  useEffect(() => {
-    fetchEvents()
-  }, [])
-
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       const response = await fetch("/api/events")
       if (!response.ok) {
@@ -39,19 +37,52 @@ export default function Contact() {
       setEvents(
         data.map((event) => ({
           ...event,
-          start: new Date(event.start),
+          start: parseISO(event.start),
+          end: moment(parseISO(event.start)).add(2, "hours").toDate(),
+          title: "Booked",
         })),
       )
     } catch (error) {
       console.error("Error fetching events:", error)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchEvents()
+  }, [fetchEvents])
 
   const handleSelectSlot = (slotInfo) => {
     setSelectedDate(slotInfo.start)
     setShowForm(true)
     setSelectedTime("")
-    setSubmitStatus(null) // Clear any previous submit status
+    setSubmitStatus(null)
+    generateAvailableTimes(slotInfo.start)
+  }
+
+  const generateAvailableTimes = (date) => {
+    const startOfDay = moment(date).startOf("day")
+    const endOfDay = moment(date).endOf("day")
+    const timeSlots = []
+
+    for (let i = 0; i < 48; i++) {
+      // 48 half-hour slots in a day
+      const currentTime = moment(startOfDay).add(i * 30, "minutes")
+      const timeString = currentTime.format("HH:mm")
+
+      const isBooked = events.some((event) => {
+        const eventStart = moment(event.start)
+        const eventEnd = moment(event.end)
+        return currentTime.isBetween(eventStart, eventEnd, null, "[)")
+      })
+
+      if (!isBooked) {
+        timeSlots.push(timeString)
+      }
+
+      if (currentTime.isSame(endOfDay)) break
+    }
+
+    setAvailableTimes(timeSlots)
   }
 
   const handleInputChange = (e) => {
@@ -75,24 +106,29 @@ export default function Contact() {
       return
     }
 
-    const appointmentDateTime = moment(selectedDate)
+    // Get the user's timezone
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+    // Create the appointment date in the user's local time
+    const localAppointmentDateTime = moment(selectedDate)
       .set({
-        hour: Number.parseInt(selectedTime.split(":")[0]),
-        minute: Number.parseInt(selectedTime.split(":")[1]),
+        hour: Number.parseInt(selectedTime.split(":")[0], 10),
+        minute: Number.parseInt(selectedTime.split(":")[1], 10),
         second: 0,
         millisecond: 0,
       })
       .toDate()
 
     const eventData = {
-      start: appointmentDateTime.toISOString(),
-      title: `${formData.service} - ${formData.name}`,
+      start: localAppointmentDateTime.toISOString(),
+      title: `Booked - ${formData.service}`,
       name: formData.name,
       email: formData.email,
       phone: formData.phone,
       whatsapp: formData.whatsapp,
       service: formData.service,
       message: formData.message,
+      timezone: userTimeZone, // Add the user's timezone to the event data
     }
 
     try {
@@ -138,7 +174,7 @@ export default function Contact() {
           localizer={localizer}
           events={events}
           startAccessor="start"
-          endAccessor="start"
+          endAccessor="end"
           style={{ height: 500 }}
           onSelectSlot={handleSelectSlot}
           selectable
@@ -164,15 +200,21 @@ export default function Contact() {
               <label htmlFor="time" className="block mb-2 text-sm font-medium text-charcoal-600">
                 Select Time
               </label>
-              <input
-                type="time"
+              <select
                 id="time"
                 name="time"
                 value={selectedTime}
                 onChange={handleTimeChange}
                 className="bg-white border border-gray-300 text-charcoal-600 text-sm rounded-lg focus:ring-rose-gold focus:border-rose-gold block w-full p-2.5"
                 required
-              />
+              >
+                <option value="">Select a time</option>
+                {availableTimes.map((time) => (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label htmlFor="name" className="block mb-2 text-sm font-medium text-charcoal-600">
@@ -273,9 +315,11 @@ export default function Contact() {
       {bookingConfirmed && (
         <div className="mt-8 p-6 bg-champagne-100 rounded-lg shadow-lg">
           <h2 className="text-2xl font-semibold mb-4 text-plum-700">Booking Confirmed!</h2>
-          <p className="mb-4">Thank you for booking with us. We'll be in touch soon to confirm your appointment.</p>
+          <p className="mb-4">
+            Thank you for booking with us. We&apos;ll be in touch soon to confirm your appointment.
+          </p>
           <p className="mb-6">
-            If you have any questions or need to make changes, please don't hesitate to contact us.
+            If you have any questions or need to make changes, please don&apos;t hesitate to contact us.
           </p>
           <a
             href={`https://wa.me/${process.env.NEXT_PUBLIC_BUSINESS_WHATSAPP}?text=Hello, I've just booked an appointment (ID: ${bookingId}). I have a question about my booking.`}

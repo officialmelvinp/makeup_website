@@ -3,12 +3,12 @@ import Link from "next/link"
 import Image from "next/image"
 
 export default async function SearchResults({ searchParams }) {
-  const query = (await searchParams).q || ""
+  const query = searchParams.q || ""
   const { services, images } = await searchContent(query)
 
   return (
     <div className="container mx-auto px-4 py-8 mt-16">
-      <h1 className="text-3xl font-bold mb-6 text-plum-800 font-playfair">Search Results for "{query}"</h1>
+      <h1 className="text-3xl font-bold mb-6 text-plum-800 font-playfair">Search Results for &quot;{query}&quot;</h1>
 
       {services.length > 0 && (
         <div className="mb-8">
@@ -35,11 +35,12 @@ export default async function SearchResults({ searchParams }) {
           <h2 className="text-2xl font-semibold mb-4 text-plum-700 font-playfair">Gallery Images</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {images.map((image, index) => (
-              <div key={index} className="relative aspect-square">
+              <div key={image.id || index} className="relative aspect-square">
                 <Image
                   src={image.src || "/placeholder.svg"}
                   alt={image.alt}
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   style={{ objectFit: "cover" }}
                   className="rounded-lg"
                 />

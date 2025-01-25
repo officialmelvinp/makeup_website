@@ -7,13 +7,13 @@ const blogPosts = [
     id: 1,
     title: "Coming Soon: Makeup Tips & Trends",
     excerpt: "Stay tuned for exciting makeup content...",
-    media: { type: "image", src: "/placeholder.svg", alt: "Coming Soon" },
+    media: { type: "image", src: "/twitter.jpg", alt: "Coming Soon" },
     date: new Date().toISOString(),
   },
   {
     id: 2,
     title: "Exciting Content on the Way",
-    excerpt: "We're preparing amazing makeup tutorials and tips for you...",
+    excerpt: "We&apos;re preparing amazing makeup tutorials and tips for you...",
     media: { type: "image", src: "/placeholder.svg", alt: "Coming Soon" },
     date: new Date().toISOString(),
   },
@@ -26,7 +26,7 @@ export default function BlogPage() {
       <div className="text-center mb-8">
         <p className="text-2xl text-charcoal-600 font-lato">Our blog is coming soon!</p>
         <p className="text-lg text-charcoal-600 font-lato mt-2">
-          We're working on exciting content for you. Check back later for makeup tips, tutorials, and trends.
+          We&apos;re working on exciting content for you. Check back later for makeup tips, tutorials, and trends.
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
