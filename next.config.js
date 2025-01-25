@@ -1,12 +1,8 @@
-import dotenv from "dotenv"
-import { fileURLToPath } from "url"
-import { dirname, join } from "path"
-import fs from "fs"
+const dotenv = require("dotenv")
+const path = require("path")
+const fs = require("fs")
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-
-const envPath = join(__dirname, ".env")
+const envPath = path.join(__dirname, ".env")
 
 if (fs.existsSync(envPath)) {
   console.log(".env file found")
@@ -25,6 +21,12 @@ const nextConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       "@": __dirname,
+    }
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        punycode: false,
+      }
     }
     return config
   },
@@ -75,5 +77,5 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+module.exports = nextConfig
 
