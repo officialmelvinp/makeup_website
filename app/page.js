@@ -72,10 +72,10 @@ export default function Home() {
   return (
     <div className="bg-champagne-50">
       {/* Hero section */}
-      <section className="relative bg-gradient-to-br from-rose-100 to-pink-200 overflow-hidden pt-32 md:pt-40">
-        <div className="container mx-auto px-6 py-20">
+      <section className="relative bg-gradient-to-br from-rose-100 to-pink-200 overflow-hidden pt-24 md:pt-32">
+        <div className="container mx-auto px-6 py-12 md:py-16">
           <div className="flex flex-col md:flex-row items-center">
-            <div className="md:w-1/2 mb-8 md:mb-0 pt-8">
+            <div className="md:w-1/2 mb-8 md:mb-0">
               <Image
                 src="/sub1.jpg"
                 alt="Dolapo Udekwe - Professional Makeup Artist"
@@ -86,9 +86,9 @@ export default function Home() {
               />
             </div>
             <div className="md:w-1/2 md:pl-12">
-              <h1 className="text-5xl font-bold mb-4 text-plum-800 font-playfair">Dolapo Udekwe</h1>
-              <p className="text-2xl mb-6 text-plum-600 font-lato">Professional Makeup Artistry</p>
-              <p className="text-lg mb-8 text-charcoal-600 font-lato">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 text-plum-800 font-playfair">Dolapo Udekwe</h1>
+              <p className="text-xl md:text-2xl mb-4 md:mb-6 text-plum-600 font-lato">Professional Makeup Artistry</p>
+              <p className="text-base md:text-lg mb-6 md:mb-8 text-charcoal-600 font-lato">
                 Transform your look with expert makeup artistry. Whether it&apos;s for your wedding day, a special
                 event, or a professional photoshoot, I&apos;m here to enhance your natural beauty and make you feel
                 confident and radiant.
@@ -96,13 +96,13 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                 <Link
                   href="/booking"
-                  className="bg-rose-gold text-white px-8 py-4 rounded-full hover:bg-rose-gold-600 transition duration-300 text-lg font-semibold font-lato text-center"
+                  className="bg-rose-gold text-white px-6 py-3 rounded-full hover:bg-rose-gold-600 transition duration-300 text-base md:text-lg font-semibold font-lato text-center"
                 >
                   Book Now
                 </Link>
                 <Link
                   href="/gallery"
-                  className="bg-rose-gold text-white px-8 py-4 rounded-full hover:bg-rose-gold-600 transition duration-300 text-lg font-semibold font-lato text-center"
+                  className="bg-rose-gold text-white px-6 py-3 rounded-full hover:bg-rose-gold-600 transition duration-300 text-base md:text-lg font-semibold font-lato text-center"
                 >
                   Explore Gallery
                 </Link>

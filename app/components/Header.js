@@ -44,22 +44,24 @@ export default function Header() {
       transition={{ duration: 0.5 }}
     >
       <nav className="container mx-auto px-4 py-4">
-        <div className="flex justify-between items-center">
-          <Link href="/" className="flex items-center">
-            <Image src="/logo.jpeg" alt="DolapoUdekwe Logo" width={100} height={40} style={{ objectFit: "contain" }} />
-            <span className={`${playfair.className} text-2xl font-extrabold ml-2 relative overflow-hidden group`}>
-              <span className={`relative z-10 text-plum-800`}>DolapoUdekwe</span>
+        <div className="flex flex-wrap justify-between items-center">
+          <Link href="/" className="flex items-center flex-shrink-0">
+            <Image src="/logo.jpeg" alt="DolapoUdekwe Logo" width={80} height={32} style={{ objectFit: "contain" }} />
+            <span
+              className={`${playfair.className} text-lg sm:text-xl lg:text-2xl font-extrabold ml-2 relative overflow-hidden group`}
+            >
+              <span className={`relative z-10 text-plum-800`}>Dolapo Udekwe</span>
               <span className="absolute inset-0 bg-gradient-to-r from-pink-300 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"></span>
             </span>
           </Link>
-          <div className="hidden md:flex space-x-6">
+          <div className="hidden lg:flex space-x-4 xl:space-x-6 flex-wrap justify-center">
             {menuItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.path}
-                className={`relative text-base font-medium ${
+                className={`relative text-sm xl:text-base font-medium ${
                   isScrolled ? "text-gray-800" : "text-gray-800"
-                } hover:text-pink-500 transition-colors duration-300 flex items-center`}
+                } hover:text-pink-500 transition-colors duration-300 flex items-center py-2`}
               >
                 {item.icon && <item.icon className="mr-1" size={18} />}
                 <span>{item.name}</span>
@@ -73,7 +75,7 @@ export default function Header() {
             ))}
           </div>
           <button
-            className="md:hidden text-gray-800 hover:text-pink-500 transition-colors duration-300"
+            className="lg:hidden text-gray-800 hover:text-pink-500 transition-colors duration-300"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -87,7 +89,7 @@ export default function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden bg-white shadow-lg"
+            className="lg:hidden bg-white shadow-lg"
           >
             <div className="container mx-auto px-4 py-4">
               {menuItems.map((item) => (
