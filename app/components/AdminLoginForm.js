@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { supabase } from "@/lib/supabase"
+import { useRouter } from "next/navigation"
 import AdminForgotPasswordModal from "./Admin-ForgotPasswordModal"
 
 export default function AdminLoginForm({ onLoginSuccess }) {
@@ -10,6 +10,7 @@ export default function AdminLoginForm({ onLoginSuccess }) {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false)
+  const router = useRouter()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -17,17 +18,28 @@ export default function AdminLoginForm({ onLoginSuccess }) {
     setIsLoading(true)
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const response = await fetch("/api/admin-login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       })
 
-      if (error) throw error
+      const data = await response.json()
 
-      onLoginSuccess()
+      if (response.ok) {
+        console.log("Login successful")
+        localStorage.setItem("adminToken", data.token)
+        onLoginSuccess()
+        router.push("/admin")
+      } else {
+        console.error("Login failed:", data.message)
+        setError(data.message || "Login failed")
+      }
     } catch (error) {
-      console.error("Login error:", error)
-      setError(error.message || "An error occurred. Please try again.")
+      console.error("Error during login:", error)
+      setError("An error occurred. Please try again.")
     } finally {
       setIsLoading(false)
     }
