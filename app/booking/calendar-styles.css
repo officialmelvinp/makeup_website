@@ -1,66 +1,65 @@
-.rbc-calendar {
-    width: 100%;
-    max-width: 100%;
-    font-family: inherit;
+.mobile-friendly-calendar {
+  font-size: 14px;
+}
+
+.mobile-friendly-calendar .rbc-calendar {
+  min-height: 300px;
+}
+
+.mobile-friendly-calendar .rbc-month-view {
+  flex: 1;
+}
+
+.mobile-friendly-calendar .rbc-header {
+  padding: 5px 3px;
+}
+
+.mobile-friendly-calendar .rbc-date-cell {
+  padding: 5px;
+}
+
+.mobile-friendly-calendar .rbc-event {
+  padding: 2px 5px;
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .mobile-friendly-calendar .rbc-toolbar {
+    flex-direction: column;
+    align-items: stretch;
   }
-  
-  .rbc-toolbar {
-    flex-wrap: wrap;
-    justify-content: center;
+
+  .mobile-friendly-calendar .rbc-toolbar-label {
+    margin: 10px 0;
   }
-  
-  .rbc-toolbar-label {
-    width: 100%;
+
+  .mobile-friendly-calendar .rbc-btn-group {
+    margin-bottom: 10px;
+  }
+
+  .mobile-friendly-calendar .rbc-month-view {
+    border-top: 1px solid #ddd;
+  }
+
+  .mobile-friendly-calendar .rbc-day-bg {
+    box-shadow: inset 0 0 0 1px #ddd;
+  }
+
+  .mobile-friendly-calendar .rbc-day-bg:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  .mobile-friendly-calendar .rbc-date-cell {
     text-align: center;
-    margin-bottom: 0.5rem;
   }
-  
-  .rbc-btn-group {
-    margin-bottom: 0.5rem;
+
+  .mobile-friendly-calendar .rbc-date-cell.rbc-now {
+    font-weight: bold;
+    color: #3174ad;
   }
-  
-  .rbc-btn-group button {
-    padding: 0.5rem;
-    font-size: 0.875rem;
+
+  .mobile-friendly-calendar .rbc-event {
+    border-radius: 2px;
   }
-  
-  .rbc-header {
-    padding: 0.5rem;
-  }
-  
-  .rbc-date-cell {
-    padding: 0.25rem;
-  }
-  
-  .rbc-event {
-    padding: 0.25rem;
-    font-size: 0.75rem;
-  }
-  
-  @media (max-width: 640px) {
-    .rbc-toolbar {
-      font-size: 0.875rem;
-    }
-  
-    .rbc-btn-group button {
-      padding: 0.25rem;
-      font-size: 0.75rem;
-    }
-  
-    .rbc-header {
-      padding: 0.25rem;
-      font-size: 0.75rem;
-    }
-  
-    .rbc-date-cell {
-      padding: 0.125rem;
-      font-size: 0.75rem;
-    }
-  
-    .rbc-event {
-      padding: 0.125rem;
-      font-size: 0.625rem;
-    }
-  }
-  
-  
+}
+

@@ -15,7 +15,17 @@ const localizer = momentLocalizer(moment)
 export default function Booking() {
   const [events, setEvents] = useState([])
   const [currentDate, setCurrentDate] = useState(new Date())
+  const [isMobile, setIsMobile] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
 
   const fetchEvents = useCallback(async () => {
     try {
@@ -71,9 +81,7 @@ export default function Booking() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8 mt-16">
-      {" "}
-      {/* Added mt-16 for top margin */}
+    <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-8 text-plum-800 font-playfair">
         Book an Appointment
       </h1>
@@ -83,11 +91,11 @@ export default function Booking() {
           events={events}
           startAccessor="start"
           endAccessor="end"
-          style={{ height: 500 }}
+          style={{ height: isMobile ? 400 : 500 }}
           onSelectSlot={handleSelectSlot}
           selectable
-          className="p-2 sm:p-4"
-          views={[Views.MONTH, Views.WEEK, Views.DAY]}
+          className="p-2 sm:p-4 mobile-friendly-calendar"
+          views={isMobile ? { month: true } : { month: true, week: true, day: true }}
           defaultView={Views.MONTH}
           date={currentDate}
           onNavigate={handleNavigate}
@@ -95,6 +103,17 @@ export default function Booking() {
           components={{
             toolbar: CustomToolbar,
           }}
+          formats={{
+            dateFormat: "D",
+            dayFormat: (date, culture, localizer) => localizer.format(date, "ddd", culture),
+          }}
+          messages={{
+            today: "Today",
+            previous: "Back",
+            next: "Next",
+          }}
+          popup
+          drilldownView={isMobile ? null : Views.DAY}
         />
       </div>
     </div>
