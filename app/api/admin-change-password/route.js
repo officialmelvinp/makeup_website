@@ -39,9 +39,9 @@ export async function POST(request) {
       return NextResponse.json({ message: "Current password is incorrect" }, { status: 400 })
     }
 
-    const newPasswordHash = await bcrypt.hash(newPassword, 10)
-    await updateAdminPassword(adminEmail, newPasswordHash)
+    await updateAdminPassword(adminEmail, newPassword)
 
+    console.log("Password changed successfully for admin:", adminEmail)
     return NextResponse.json({ message: "Password changed successfully" })
   } catch (error) {
     console.error("Error in password change:", error)
