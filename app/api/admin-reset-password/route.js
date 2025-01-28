@@ -19,14 +19,14 @@ export async function GET(request) {
       .single()
 
     if (error || !data) {
-      console.log("Invalid or expired token:", error)
+      console.error("Invalid or expired token:", error)
       return NextResponse.json({ message: "Invalid or expired token" }, { status: 400 })
     }
 
     return NextResponse.json({ message: "Token is valid" })
   } catch (error) {
-    console.error("Error verifying reset token:", error)
-    return NextResponse.json({ message: "Failed to verify token" }, { status: 500 })
+    console.error("Error verifying token:", error)
+    return NextResponse.json({ message: "An error occurred while verifying the token" }, { status: 500 })
   }
 }
 
@@ -69,6 +69,7 @@ export async function POST(request) {
     }
 
     console.log("Password reset successfully for user:", data.email)
+    console.log("Stored hashed password:", hashedPassword)
     return NextResponse.json({ message: "Password reset successfully" })
   } catch (error) {
     console.error("Error resetting password:", error)

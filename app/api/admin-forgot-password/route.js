@@ -5,7 +5,20 @@ import { sendEmail } from "@/lib/mail"
 
 export async function POST(request) {
   try {
-    const { email } = await request.json()
+    // Add error handling for JSON parsing
+    let email
+    try {
+      const body = await request.json()
+      email = body.email
+    } catch (error) {
+      console.error("Error parsing JSON:", error)
+      return NextResponse.json({ message: "Invalid request body" }, { status: 400 })
+    }
+
+    // Check if email is provided
+    if (!email) {
+      return NextResponse.json({ message: "Email is required" }, { status: 400 })
+    }
 
     if (email !== process.env.EMAIL_HOST_USER) {
       return NextResponse.json({
