@@ -19,6 +19,7 @@ export async function GET(request) {
       .single()
 
     if (error || !data) {
+      console.log("Invalid or expired token:", error)
       return NextResponse.json({ message: "Invalid or expired token" }, { status: 400 })
     }
 
@@ -45,10 +46,13 @@ export async function POST(request) {
       .single()
 
     if (error || !data) {
+      console.error("Invalid or expired token:", error)
       return NextResponse.json({ message: "Invalid or expired token" }, { status: 400 })
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
+    console.log("Resetting password for user:", data.email)
+    console.log("New hashed password:", hashedPassword)
 
     const { error: updateError } = await supabase
       .from("admin_users")
@@ -59,8 +63,12 @@ export async function POST(request) {
       })
       .eq("id", data.id)
 
-    if (updateError) throw updateError
+    if (updateError) {
+      console.error("Error updating password:", updateError)
+      throw updateError
+    }
 
+    console.log("Password reset successfully for user:", data.email)
     return NextResponse.json({ message: "Password reset successfully" })
   } catch (error) {
     console.error("Error resetting password:", error)

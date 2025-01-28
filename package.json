@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postinstall": "npm run build",
-    "start": "cross-env NODE_ENV=production node server.js",
+    "start": "next start",
     "test-env": "node test-env.js",
     "lint": "next lint"
   },
