@@ -18,10 +18,10 @@ export default function About() {
           </div>
         </div>
         <div className="md:w-1/2">
-          <h2 className="text-3xl font-semibold mb-8 text-plum-800 font-playfair">Dolly Udekwe</h2>
+          <h2 className="text-3xl font-semibold mb-8 text-plum-800 font-playfair">Dolapo Udekwe</h2>
           <div className="space-y-6 text-lg text-charcoal-700 leading-relaxed">
             <p>
-              Welcome to my world of beauty and artistry. I&apos;m Dolly Udekwe, a passionate and professional makeup artist with over a decade of experience in the beauty industry. My journey began in 2013, fueled by a deep love for creativity and a desire to help individuals feel confident in their own skin.
+              Welcome to my world of beauty and artistry. I&apos;m Dolapo Udekwe, a passionate and professional makeup artist with over a decade of experience in the beauty industry. My journey began in 2013, fueled by a deep love for creativity and a desire to help individuals feel confident in their own skin.
             </p>
             <p>
               Throughout my career, I&apos;ve had the privilege of working with a diverse clientele, from radiant brides seeking a timeless look for their special day to individuals desiring the perfect glam for high-profile events and photoshoots. My philosophy is simple yet powerful: enhance natural beauty while tailoring each makeup look to suit your unique features and personal style.
