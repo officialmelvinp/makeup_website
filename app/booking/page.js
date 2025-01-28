@@ -50,9 +50,39 @@ export default function Booking() {
     fetchEvents()
   }, [fetchEvents])
 
-  const handleSelectSlot = (slotInfo) => {
-    router.push(`/booking/time?date=${slotInfo.start.toISOString().split("T")[0]}`)
-  }
+  const handleSelectSlot = useCallback(
+    (slotInfo) => {
+      const selectedDate = moment(slotInfo.start).format("YYYY-MM-DD")
+      router.push(`/booking/time?date=${selectedDate}`)
+    },
+    [router],
+  )
+
+  useEffect(() => {
+    const handleTouchStart = (e) => {
+      if (e.touches.length === 1) {
+        const touch = e.touches[0]
+        const target = document.elementFromPoint(touch.clientX, touch.clientY)
+        if (target && target.classList.contains("rbc-date-cell")) {
+          const date = target.getAttribute("data-date")
+          if (date) {
+            router.push(`/booking/time?date=${date}`)
+          }
+        }
+      }
+    }
+
+    const calendarElement = document.querySelector(".mobile-friendly-calendar")
+    if (calendarElement) {
+      calendarElement.addEventListener("touchstart", handleTouchStart)
+    }
+
+    return () => {
+      if (calendarElement) {
+        calendarElement.removeEventListener("touchstart", handleTouchStart)
+      }
+    }
+  }, [router])
 
   const CustomToolbar = ({ date, onNavigate, label }) => {
     const goToBack = () => {
@@ -93,7 +123,8 @@ export default function Booking() {
           endAccessor="end"
           style={{ height: isMobile ? 400 : 500 }}
           onSelectSlot={handleSelectSlot}
-          selectable
+          selectable={true}
+          longPressThreshold={50}
           className="p-2 sm:p-4 mobile-friendly-calendar"
           views={isMobile ? { month: true } : { month: true, week: true, day: true }}
           defaultView={Views.MONTH}
