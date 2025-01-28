@@ -1,6 +1,9 @@
+"use client"
+
 import { useState } from "react"
 import { Dialog } from "@headlessui/react"
 import { X } from "lucide-react"
+import { supabase } from "@/lib/supabase"
 
 export default function AdminChangePasswordModal({ isOpen, onClose, onChangePassword }) {
   const [currentPassword, setCurrentPassword] = useState("")
@@ -29,29 +32,20 @@ export default function AdminChangePasswordModal({ isOpen, onClose, onChangePass
     }
 
     try {
-      const response = await fetch("/api/admin-change-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
-        },
-        body: JSON.stringify({ currentPassword, newPassword }),
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
       })
 
-      const data = await response.json()
+      if (error) throw error
 
-      if (response.ok) {
-        setSuccessMessage(data.message)
-        onChangePassword()
-        setTimeout(() => {
-          onClose()
-        }, 2000) // Close the modal after 2 seconds
-      } else {
-        setError(data.message || "Failed to change password")
-      }
+      setSuccessMessage("Password changed successfully")
+      onChangePassword()
+      setTimeout(() => {
+        onClose()
+      }, 2000) // Close the modal after 2 seconds
     } catch (error) {
       console.error("Error changing password:", error)
-      setError("An error occurred. Please try again.")
+      setError(error.message || "An error occurred. Please try again.")
     } finally {
       setIsLoading(false)
     }

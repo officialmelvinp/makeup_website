@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
-import { query, updateAdminPassword } from "@/lib/db"
+import { updateAdminPassword, supabase } from "@/lib/supabase"
 import { jwtVerify } from "jose"
 
 export async function POST(request) {
@@ -24,16 +24,17 @@ export async function POST(request) {
       return NextResponse.json({ message: "Missing required fields" }, { status: 400 })
     }
 
-    const result = await query("SELECT password FROM admin_users WHERE username = $1", [
-      process.env.NEXT_PUBLIC_ADMIN_USERNAME,
-    ])
+    const { data: adminUser, error: fetchError } = await supabase
+      .from("admin_users")
+      .select("password")
+      .eq("username", process.env.NEXT_PUBLIC_ADMIN_USERNAME)
+      .single()
 
-    if (result.rows.length === 0) {
+    if (fetchError || !adminUser) {
       return NextResponse.json({ message: "Admin user not found" }, { status: 404 })
     }
 
-    const storedPasswordHash = result.rows[0].password
-    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, storedPasswordHash)
+    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, adminUser.password)
 
     if (!isCurrentPasswordValid) {
       return NextResponse.json({ message: "Current password is incorrect" }, { status: 400 })
@@ -41,6 +42,13 @@ export async function POST(request) {
 
     const newPasswordHash = await bcrypt.hash(newPassword, 10)
     await updateAdminPassword(process.env.NEXT_PUBLIC_ADMIN_USERNAME, newPasswordHash)
+
+    // Update Supabase Auth
+    const { error: authError } = await supabase.auth.updateUser({ password: newPassword })
+
+    if (authError) {
+      throw authError
+    }
 
     return NextResponse.json({ message: "Admin password changed successfully" })
   } catch (error) {

@@ -1,5 +1,6 @@
 import { Dialog } from "@headlessui/react"
 import { X, Phone, Trash2 } from "lucide-react"
+import { formatInTimeZone } from "date-fns-tz"
 
 export default function EventDetailsModal({ event, isOpen, onClose, onDelete }) {
   const openWhatsApp = () => {
@@ -26,7 +27,8 @@ export default function EventDetailsModal({ event, isOpen, onClose, onDelete }) 
               <strong>Service:</strong> {event.service_type}
             </p>
             <p>
-              <strong>Date:</strong> {new Date(event.start).toLocaleString()}
+              <strong>Date and Time:</strong>{" "}
+              {formatInTimeZone(new Date(event.start), event.timezone || "UTC", "yyyy-MM-dd HH:mm")}
             </p>
             <p>
               <strong>Email:</strong> {event.client_email}
@@ -35,7 +37,10 @@ export default function EventDetailsModal({ event, isOpen, onClose, onDelete }) 
               <strong>Phone:</strong> {event.client_phone}
             </p>
             <p>
-              <strong>Notes:</strong> {event.notes}
+              <strong>WhatsApp:</strong> {event.client_whatsapp || "Not provided"}
+            </p>
+            <p>
+              <strong>Notes:</strong> {event.notes || "No notes provided"}
             </p>
           </div>
           <div className="mt-4 flex justify-between">
@@ -47,7 +52,7 @@ export default function EventDetailsModal({ event, isOpen, onClose, onDelete }) 
               Chat on WhatsApp
             </button>
             <button
-              onClick={onDelete}
+              onClick={() => onDelete(event.id)}
               className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded inline-flex items-center"
             >
               <Trash2 className="mr-2" size={18} />

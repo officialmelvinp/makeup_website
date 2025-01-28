@@ -40,7 +40,7 @@ export default function AdminForgotPasswordModal({ isOpen, onClose }) {
           onClose()
         }, 3000) // Close the modal after 3 seconds
       } else {
-        setError(data.message || "Failed to process request")
+        setError(data.message || "Failed to process request. Please try again.")
       }
     } catch (error) {
       console.error("Error processing forgot password request:", error)

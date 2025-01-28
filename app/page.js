@@ -12,13 +12,9 @@ const DynamicSlider = dynamic(() => import("react-slick").then((mod) => mod.defa
 
 export default function Home() {
   const [mounted, setMounted] = useState(false)
-  const [scrollY, setScrollY] = useState(0)
 
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY)
-    window.addEventListener("scroll", handleScroll)
     setMounted(true)
-    return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
   const services = [
@@ -76,14 +72,7 @@ export default function Home() {
   return (
     <div className="bg-champagne-50">
       {/* Hero section */}
-      <section
-        className="relative bg-gradient-to-br from-rose-100 to-pink-200 overflow-hidden"
-        style={{
-          minHeight: "100vh",
-          paddingTop: "80px",
-          marginTop: `-${Math.min(scrollY, 80)}px`,
-        }}
-      >
+      <section className="relative bg-gradient-to-br from-rose-100 to-pink-200 overflow-hidden pt-32 md:pt-40">
         <div className="container mx-auto px-6 py-20">
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-8 md:mb-0 pt-8">
@@ -93,6 +82,7 @@ export default function Home() {
                 width={600}
                 height={600}
                 className="rounded-lg shadow-xl"
+                priority
               />
             </div>
             <div className="md:w-1/2 md:pl-12">
@@ -105,7 +95,7 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                 <Link
-                  href="/contact"
+                  href="/booking"
                   className="bg-rose-gold text-white px-8 py-4 rounded-full hover:bg-rose-gold-600 transition duration-300 text-lg font-semibold font-lato text-center"
                 >
                   Book Now

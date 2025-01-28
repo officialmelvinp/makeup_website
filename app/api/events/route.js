@@ -1,21 +1,24 @@
 import { NextResponse } from "next/server"
-import db from "@/lib/db"
-import { parseISO, formatISO } from "date-fns"
-import { formatInTimeZone } from "date-fns-tz"
+import { supabase } from "@/lib/supabase"
+import { parseISO, formatISO, subHours, addHours } from "date-fns"
+import { formatInTimeZone, utcToZonedTime } from "date-fns-tz"
 
 export async function GET() {
   try {
-    const results = await db.query("SELECT *, timezone FROM events ORDER BY start DESC")
+    const { data: results, error } = await supabase.from("events").select("*").order("start", { ascending: false })
 
-    const adjustedResults = results.rows.map((event) => {
+    if (error) throw error
+
+    const adjustedResults = results.map((event) => {
       try {
-        const parsedDate = new Date(event.start)
+        const parsedDate = parseISO(event.start)
         if (isNaN(parsedDate.getTime())) {
           throw new Error("Invalid date")
         }
+        const zonedDate = utcToZonedTime(parsedDate, event.timezone || "UTC")
         return {
           ...event,
-          start: formatInTimeZone(parsedDate, event.timezone || "UTC", "yyyy-MM-dd'T'HH:mm:ssXXX"),
+          start: formatInTimeZone(zonedDate, event.timezone || "UTC", "yyyy-MM-dd'T'HH:mm:ssXXX"),
         }
       } catch (error) {
         console.error(`Error parsing date for event ${event.id}:`, error)
@@ -41,19 +44,24 @@ export async function POST(request) {
       return NextResponse.json({ error: "Timezone is required" }, { status: 400 })
     }
 
-    const startDate = new Date(start)
+    const startDate = parseISO(start)
     if (isNaN(startDate.getTime())) {
       return NextResponse.json({ error: "Invalid start date" }, { status: 400 })
     }
 
-    const utcStartDate = new Date(startDate.toUTCString())
+    // Convert the start time to UTC for storage
+    const utcStartDate = formatISO(startDate)
 
-    const conflictingEvents = await db.query(
-      "SELECT * FROM events WHERE start >= $1::timestamp - INTERVAL '2 hours' AND start < $1::timestamp + INTERVAL '2 hours'",
-      [formatISO(utcStartDate)],
-    )
+    // Check for conflicting events
+    const { data: conflictingEvents, error: conflictError } = await supabase
+      .from("events")
+      .select("*")
+      .gte("start", formatISO(subHours(startDate, 2)))
+      .lt("start", formatISO(addHours(startDate, 2)))
 
-    if (conflictingEvents.rows.length > 0) {
+    if (conflictError) throw conflictError
+
+    if (conflictingEvents.length > 0) {
       return NextResponse.json(
         {
           error:
@@ -63,12 +71,25 @@ export async function POST(request) {
       )
     }
 
-    const result = await db.query(
-      "INSERT INTO events (start, title, client_name, client_email, client_phone, client_whatsapp, service_type, notes, timezone) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id",
-      [formatISO(utcStartDate), title, name, email, phone, whatsapp || phone, service, message, timezone],
-    )
+    // Insert new event
+    const { data: newEvent, error: insertError } = await supabase
+      .from("events")
+      .insert({
+        start: utcStartDate,
+        title,
+        client_name: name,
+        client_email: email,
+        client_phone: phone,
+        client_whatsapp: whatsapp || phone,
+        service_type: service,
+        notes: message,
+        timezone,
+      })
+      .select()
 
-    return NextResponse.json({ id: result.rows[0].id }, { status: 201 })
+    if (insertError) throw insertError
+
+    return NextResponse.json({ id: newEvent[0].id }, { status: 201 })
   } catch (error) {
     console.error("Database query error:", error)
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })

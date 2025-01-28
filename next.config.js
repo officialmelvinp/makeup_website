@@ -1,26 +1,10 @@
-const dotenv = require("dotenv")
-const path = require("path")
-const fs = require("fs")
-
-const envPath = path.join(__dirname, ".env")
-
-if (fs.existsSync(envPath)) {
-  console.log(".env file found")
-  const envConfig = dotenv.parse(fs.readFileSync(envPath))
-  for (const k in envConfig) {
-    process.env[k] = envConfig[k]
-  }
-} else {
-  console.log(".env file not found")
-}
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  webpack: (config, { isServer }) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      "@": __dirname,
+      "@": new URL(".", import.meta.url).pathname,
     }
     if (!isServer) {
       config.resolve.fallback = {
@@ -30,24 +14,24 @@ const nextConfig = {
     }
     return config
   },
+  // Only include non-public env vars here. NEXT_PUBLIC_ vars are automatically included.
   env: {
-    NEXT_PUBLIC_ADMIN_USERNAME: process.env.NEXT_PUBLIC_ADMIN_USERNAME,
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
-    DB_USER: process.env.DB_USER,
-    DB_PASSWORD: process.env.DB_PASSWORD,
-    DB_HOST: process.env.DB_HOST,
-    DB_PORT: process.env.DB_PORT,
-    DB_NAME: process.env.DB_NAME,
-    NEXT_PUBLIC_ALLOWED_HOSTS: process.env.NEXT_PUBLIC_ALLOWED_HOSTS,
+    // DB_USER: process.env.DB_USER,
+    // DB_PASSWORD: process.env.DB_PASSWORD,
+    // #DB_HOST: process.env.DB_HOST,
+    // DB_PORT: process.env.DB_PORT,
+    // DB_NAME: process.env.DB_NAME,
     EMAIL_HOST_USER: process.env.EMAIL_HOST_USER,
     SMTP_FROM: process.env.SMTP_FROM,
     EMAIL_USE_SSL: process.env.EMAIL_USE_SSL,
-    NEXT_PUBLIC_BUSINESS_WHATSAPP: process.env.NEXT_PUBLIC_BUSINESS_WHATSAPP,
     EMAIL_HOST: process.env.EMAIL_HOST,
     EMAIL_HOST_PASSWORD: process.env.EMAIL_HOST_PASSWORD,
     EMAIL_PORT: process.env.EMAIL_PORT,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   },
   async headers() {
     return [
@@ -77,5 +61,5 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+export default nextConfig
 

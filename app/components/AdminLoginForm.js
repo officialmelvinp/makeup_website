@@ -1,11 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
+import { supabase } from "@/lib/supabase"
 import AdminForgotPasswordModal from "./Admin-ForgotPasswordModal"
 
 export default function AdminLoginForm({ onLoginSuccess }) {
-  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -17,25 +17,17 @@ export default function AdminLoginForm({ onLoginSuccess }) {
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/admin-login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       })
 
-      const data = await response.json()
+      if (error) throw error
 
-      if (response.ok) {
-        localStorage.setItem("adminToken", data.token)
-        onLoginSuccess()
-      } else {
-        setError(data.message || "Login failed")
-      }
+      onLoginSuccess()
     } catch (error) {
       console.error("Login error:", error)
-      setError("An error occurred. Please try again.")
+      setError(error.message || "An error occurred. Please try again.")
     } finally {
       setIsLoading(false)
     }
@@ -51,18 +43,18 @@ export default function AdminLoginForm({ onLoginSuccess }) {
           <input type="hidden" name="remember" defaultValue="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="username" className="sr-only">
-                Username
+              <label htmlFor="email" className="sr-only">
+                Email address
               </label>
               <input
-                id="username"
-                name="username"
-                type="text"
+                id="email"
+                name="email"
+                type="email"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>

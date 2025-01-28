@@ -35,7 +35,7 @@ export default function Gallery() {
       </div>
       <div className="text-center mt-12">
         <Link
-          href="/contact"
+          href="/booking"
           className="bg-rose-gold text-white px-8 py-4 rounded-full hover:bg-rose-gold-600 transition duration-300 text-lg font-semibold font-lato"
         >
           Book Your Session

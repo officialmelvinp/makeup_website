@@ -1,0 +1,66 @@
+.rbc-calendar {
+    width: 100%;
+    max-width: 100%;
+    font-family: inherit;
+  }
+  
+  .rbc-toolbar {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .rbc-toolbar-label {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .rbc-btn-group {
+    margin-bottom: 0.5rem;
+  }
+  
+  .rbc-btn-group button {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .rbc-header {
+    padding: 0.5rem;
+  }
+  
+  .rbc-date-cell {
+    padding: 0.25rem;
+  }
+  
+  .rbc-event {
+    padding: 0.25rem;
+    font-size: 0.75rem;
+  }
+  
+  @media (max-width: 640px) {
+    .rbc-toolbar {
+      font-size: 0.875rem;
+    }
+  
+    .rbc-btn-group button {
+      padding: 0.25rem;
+      font-size: 0.75rem;
+    }
+  
+    .rbc-header {
+      padding: 0.25rem;
+      font-size: 0.75rem;
+    }
+  
+    .rbc-date-cell {
+      padding: 0.125rem;
+      font-size: 0.75rem;
+    }
+  
+    .rbc-event {
+      padding: 0.125rem;
+      font-size: 0.625rem;
+    }
+  }
+  
+  

@@ -1,59 +1,40 @@
 import { NextResponse } from "next/server"
-import jwt from "jsonwebtoken"
-import bcrypt from "bcryptjs"
-import { config } from "../../../config.js"
-
-const JWT_SECRET = config.NEXTAUTH_SECRET
+import { supabase } from "@/lib/supabase"
 
 export async function POST(request) {
   console.log("Login attempt received")
-  const { username, password } = await request.json()
+  const { email, password } = await request.json()
 
-  console.log("Login attempt:", { username, password: "********" })
-
-  if (username !== config.NEXT_PUBLIC_ADMIN_USERNAME) {
-    console.log("Invalid username")
-    return NextResponse.json({ message: "Invalid credentials" }, { status: 401 })
-  }
-
-  const storedPasswordHash = config.ADMIN_PASSWORD
-  if (!storedPasswordHash) {
-    console.error("ADMIN_PASSWORD is not set in environment variables")
-    return NextResponse.json({ message: "Server configuration error" }, { status: 500 })
-  }
+  console.log("Login attempt:", { email, password: "********" })
 
   try {
-    console.log("Attempting to compare passwords")
-    console.log("Stored password hash:", storedPasswordHash)
-    const isPasswordValid = await bcrypt.compare(password, storedPasswordHash)
-    console.log("Password validation result:", isPasswordValid)
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
 
-    if (isPasswordValid) {
-      const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: "1h" })
-      console.log("Login successful, token generated")
-      return NextResponse.json({ success: true, token })
-    } else {
-      console.log("Invalid password")
+    if (error) {
+      console.log("Login failed:", error.message)
       return NextResponse.json({ message: "Invalid credentials" }, { status: 401 })
     }
+
+    console.log("Login successful")
+    return NextResponse.json({ success: true, session: data.session })
   } catch (error) {
-    console.error("Error during password comparison:", error)
+    console.error("Error during authentication:", error)
     return NextResponse.json({ message: "An error occurred during authentication" }, { status: 500 })
   }
 }
 
 export async function GET(request) {
-  const authHeader = request.headers.get("authorization")
-  if (!authHeader) {
-    return NextResponse.json({ error: "No token provided" }, { status: 401 })
-  }
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
 
-  const token = authHeader.split(" ")[1]
-  try {
-    jwt.verify(token, JWT_SECRET)
-    return NextResponse.json({ valid: true })
-  } catch (error) {
+  if (!session) {
     return NextResponse.json({ valid: false }, { status: 401 })
   }
+
+  return NextResponse.json({ valid: true })
 }
 

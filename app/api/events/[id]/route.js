@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server"
-import db from "@/lib/db"
+import { supabase } from "@/lib/supabase"
 
 export async function DELETE(request, { params }) {
   try {
     const { id } = params
 
-    const result = await db.query("DELETE FROM events WHERE id = $1", [id])
+    const { error, data } = await supabase.from("events").delete().eq("id", id)
 
-    if (result.rowCount === 0) {
+    if (error) throw error
+
+    if (data.length === 0) {
       return NextResponse.json({ error: "Event not found" }, { status: 404 })
     }
 

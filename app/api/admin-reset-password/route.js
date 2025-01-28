@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
-import { query } from "@/lib/db"
+import { supabase } from "@/lib/supabase"
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
@@ -11,11 +11,14 @@ export async function GET(request) {
   }
 
   try {
-    const result = await query("SELECT * FROM admin_users WHERE reset_token = $1 AND reset_token_expiry > NOW()", [
-      token,
-    ])
+    const { data, error } = await supabase
+      .from("admin_users")
+      .select("*")
+      .eq("reset_token", token)
+      .gt("reset_token_expiry", new Date().toISOString())
+      .single()
 
-    if (result.rows.length === 0) {
+    if (error || !data) {
       return NextResponse.json({ message: "Invalid or expired token" }, { status: 400 })
     }
 
@@ -29,22 +32,34 @@ export async function GET(request) {
 export async function POST(request) {
   const { token, password } = await request.json()
 
-  try {
-    const result = await query("SELECT * FROM admin_users WHERE reset_token = $1 AND reset_token_expiry > NOW()", [
-      token,
-    ])
+  if (!token || !password) {
+    return NextResponse.json({ message: "Token and password are required" }, { status: 400 })
+  }
 
-    if (result.rows.length === 0) {
+  try {
+    const { data, error } = await supabase
+      .from("admin_users")
+      .select("*")
+      .eq("reset_token", token)
+      .gt("reset_token_expiry", new Date().toISOString())
+      .single()
+
+    if (error || !data) {
       return NextResponse.json({ message: "Invalid or expired token" }, { status: 400 })
     }
 
-    const adminUser = result.rows[0]
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    await query("UPDATE admin_users SET password = $1, reset_token = NULL, reset_token_expiry = NULL WHERE id = $2", [
-      hashedPassword,
-      adminUser.id,
-    ])
+    const { error: updateError } = await supabase
+      .from("admin_users")
+      .update({
+        password: hashedPassword,
+        reset_token: null,
+        reset_token_expiry: null,
+      })
+      .eq("id", data.id)
+
+    if (updateError) throw updateError
 
     return NextResponse.json({ message: "Password reset successfully" })
   } catch (error) {

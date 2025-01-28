@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Calendar, Clock, User, Trash2 } from "lucide-react"
-import { format } from "date-fns-tz"
+import { formatInTimeZone } from "date-fns-tz"
 
 export default function EventListView({ events, onSelectEvent, onDeleteEvent, formatEventTime }) {
   const [selectedEvent, setSelectedEvent] = useState(null)
@@ -34,13 +34,13 @@ export default function EventListView({ events, onSelectEvent, onDeleteEvent, fo
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <Calendar className="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-                    <span>{format(event.start, "yyyy-MM-dd", { timeZone: event.timezone })}</span>
+                    <span>{formatInTimeZone(new Date(event.start), event.timezone || "UTC", "yyyy-MM-dd")}</span>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <Clock className="flex-shrink-0 mr-2 h-5 w-5 text-gray-400" />
-                    <span>{formatEventTime(event)}</span>
+                    <span>{formatInTimeZone(new Date(event.start), event.timezone || "UTC", "HH:mm")}</span>
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
