@@ -18,11 +18,6 @@ const nextConfig = {
   env: {
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
-    // DB_USER: process.env.DB_USER,
-    // DB_PASSWORD: process.env.DB_PASSWORD,
-    // #DB_HOST: process.env.DB_HOST,
-    // DB_PORT: process.env.DB_PORT,
-    // DB_NAME: process.env.DB_NAME,
     EMAIL_HOST_USER: process.env.EMAIL_HOST_USER,
     SMTP_FROM: process.env.SMTP_FROM,
     EMAIL_USE_SSL: process.env.EMAIL_USE_SSL,
@@ -53,7 +48,7 @@ const nextConfig = {
           {
             key: "Content-Security-Policy",
             value:
-              "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:;",
+              "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:;",
           },
         ],
       },
