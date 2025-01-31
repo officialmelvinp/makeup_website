@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="bg-purple-100 text-gray-800">
       <div className="container mx-auto px-4 sm:px-6 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center md:text-left">
+          <div className="text-center md:text-left md:col-span-3 lg:col-span-1">
             <h2 className="text-2xl font-bold mb-2 text-plum-800 font-playfair">Dolapo Udekwe</h2>
             <p className="text-sm opacity-75 mb-4">Transforming faces, enhancing beauty</p>
             <div className="flex justify-center md:justify-start space-x-4">
@@ -25,7 +25,7 @@ export default function Footer() {
               </a>
             </div>
           </div>
-          <nav className="flex flex-col space-y-2">
+          <nav className="flex flex-col space-y-2 md:pl-20 lg:pl-0">
             <Link href="/" className="hover:text-pink-500 transition-colors duration-300">
               Home
             </Link>
@@ -51,8 +51,7 @@ export default function Footer() {
           </nav>
           <div className="text-center md:text-right">
             <h3 className="text-lg font-semibold mb-2">Contact Us</h3>
-            <p className="text-sm mb-1">Email: info@dolapoudekwe.com</p>
-            <p className="text-sm mb-1">Phone: +44 123 456 7890</p>
+            <p className="text-sm mb-1">Email: contact@dolapoudekwe.co.uk</p>
             <p className="text-sm">Address: London, UK</p>
           </div>
         </div>

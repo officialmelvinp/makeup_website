@@ -81,7 +81,7 @@ export default function Contact() {
             <div className="flex items-center">
               <FaPhone className="text-2xl text-blue-500 mr-4" aria-hidden="true" />
               <a href="tel:+447445544254" className="text-plum-600 hover:text-plum-800">
-                +44 7445 544 254
+                
               </a>
             </div>
           </div>

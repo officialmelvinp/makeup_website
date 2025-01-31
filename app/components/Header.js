@@ -92,17 +92,21 @@ export default function Header() {
             className="lg:hidden bg-white shadow-lg"
           >
             <div className="container mx-auto px-4 py-4">
-              {menuItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.path}
-                  className="block py-2 text-gray-800 hover:text-pink-500 transition-colors duration-300 flex items-center"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.icon && <item.icon className="mr-2" size={18} />}
-                  <span>{item.name}</span>
-                </Link>
-              ))}
+              <div className="pl-20">
+                {" "}
+                {/* Added padding-left to align with the logo */}
+                {menuItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.path}
+                    className="block py-2 text-gray-800 hover:text-pink-500 transition-colors duration-300 flex items-center"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.icon && <item.icon className="mr-2" size={18} />}
+                    <span>{item.name}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </motion.div>
         )}
