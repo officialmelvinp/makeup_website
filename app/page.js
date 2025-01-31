@@ -33,40 +33,70 @@ export default function Home() {
   ]
 
   const recentTransformations = [
-    { src: "/a.jpg", alt: "Bridal Makeup Transformation" },
-    { src: "/z5.jpg", alt: "Special Event Makeup Transformation" },
-    { src: "/z2.jpg", alt: "Photoshoot Makeup Transformation" },
-    { src: "/z4.jpg", alt: "Avant-Garde Makeup Transformation" },
-    { src: "/twitter.jpg", alt: "Avant-Garde Makeup Transformation" },
-    { src: "/og-image.jpg", alt: "Avant-Garde Makeup Transformation" },
-    { src: "/sub1.jpg", alt: "Avant-Garde Makeup Transformation" },
-    { src: "/sub2.jpg", alt: "Bridal Makeup Transformation" },
+    {
+      src: "/a.jpg",
+      alt: "Bridal Makeup Transformation",
+      caption: "Elegant bridal makeup for a destination wedding in Dubai. Completed in just 45 minutes!",
+    },
+    {
+      src: "/z5.jpg",
+      alt: "Special Event Makeup Transformation",
+      caption: "Glamorous look for a red carpet event in London. This bold style took only 30 minutes to create.",
+    },
+    {
+      src: "/z2.jpg",
+      alt: "Photoshoot Makeup Transformation",
+      caption: "Natural, dewy look for a summer fashion photoshoot. Achieved this fresh face in 20 minutes.",
+    },
+    {
+      src: "/z4.jpg",
+      alt: "Avant-Garde Makeup Transformation",
+      caption:
+        "Artistic avant-garde makeup for a high-fashion editorial. This intricate design took 2 hours to perfect.",
+    },
+    {
+      src: "/twitter.jpg",
+      alt: "Celebrity Makeup Transformation",
+      caption: "Red carpet-ready look for a celebrity client. Completed in 1 hour for a major awards show.",
+    },
+    {
+      src: "/og-image.jpg",
+      alt: "Dramatic Evening Makeup Transformation",
+      caption: "Sultry evening makeup for a gala event. This smokey eye look was done in just 40 minutes.",
+    },
+    {
+      src: "/sub1.jpg",
+      alt: "Natural Daytime Makeup Transformation",
+      caption: "Effortless 'no-makeup' makeup look for a daytime event. Achieved this natural glow in 15 minutes.",
+    },
+    {
+      src: "/sub2.jpg",
+      alt: "Vintage-Inspired Makeup Transformation",
+      caption: "1950s-inspired makeup for a themed wedding. This retro look was created in 35 minutes.",
+    },
+    {
+      src: "/placeholder.svg",
+      alt: "Cultural Makeup Transformation",
+      caption: "Traditional bridal makeup for a multicultural wedding. This intricate look took 1.5 hours to complete.",
+    },
+    {
+      src: "/placeholder.svg",
+      alt: "Halloween Makeup Transformation",
+      caption:
+        "Spooky yet glamorous Halloween makeup. This dramatic transformation required 2.5 hours of detailed work.",
+    },
   ]
 
   const sliderSettings = {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 4,
+    slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3000,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-        },
-      },
-    ],
+    autoplaySpeed: 7000,
+    fade: true,
+    cssEase: "linear",
   }
 
   return (
@@ -141,22 +171,27 @@ export default function Home() {
         <div className="container mx-auto px-6">
           <h2 className="text-4xl font-bold text-center mb-16 text-plum-800 font-playfair">Recent Transformations</h2>
           {mounted && (
-            <DynamicSlider {...sliderSettings}>
-              {recentTransformations.map((image, index) => (
-                <div key={index} className="px-2">
-                  <div className="relative aspect-square rounded-lg overflow-hidden shadow-lg">
-                    <Image
-                      src={image.src || "/placeholder.svg"}
-                      alt={image.alt}
-                      fill
-                      sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
-                      style={{ objectFit: "cover" }}
-                      className="rounded-lg"
-                    />
+            <div className="max-w-3xl mx-auto">
+              <DynamicSlider {...sliderSettings}>
+                {recentTransformations.map((image, index) => (
+                  <div key={index} className="px-2">
+                    <div className="relative aspect-square rounded-lg overflow-hidden shadow-lg">
+                      <Image
+                        src={image.src || "/placeholder.svg"}
+                        alt={image.alt}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        style={{ objectFit: "cover" }}
+                        className="rounded-lg"
+                      />
+                    </div>
+                    <div className="mt-4 text-center">
+                      <p className="text-lg text-charcoal-600 font-lato">{image.caption}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </DynamicSlider>
+                ))}
+              </DynamicSlider>
+            </div>
           )}
           <div className="text-center mt-12">
             <Link
