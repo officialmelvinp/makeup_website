@@ -46,13 +46,15 @@ export default function Header() {
       <nav className="container mx-auto px-4 py-4">
         <div className="flex flex-wrap justify-between items-center">
           <Link href="/" className="flex items-center flex-shrink-0">
-            <Image src="/logo.jpeg" alt="DolapoUdekwe Logo" width={80} height={32} style={{ objectFit: "contain" }} />
-            <span
-              className={`${playfair.className} text-lg sm:text-xl lg:text-2xl font-extrabold ml-2 relative overflow-hidden group`}
-            >
-              <span className={`relative z-10 text-plum-800`}>Dolapo Udekwe</span>
-              <span className="absolute inset-0 bg-gradient-to-r from-pink-300 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"></span>
-            </span>
+            <div className="flex items-center">
+              <Image src="/logo.jpeg" alt="DolapoUdekwe Logo" width={80} height={32} style={{ objectFit: "contain" }} />
+              <span
+                className={`${playfair.className} text-lg sm:text-xl lg:text-2xl font-extrabold ml-2 relative overflow-hidden group`}
+              >
+                <span className={`relative z-10 text-plum-800`}>Dolapo Udekwe</span>
+                <span className="absolute inset-0 bg-gradient-to-r from-pink-300 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"></span>
+              </span>
+            </div>
           </Link>
           <div className="hidden lg:flex space-x-4 xl:space-x-6 flex-wrap justify-center">
             {menuItems.map((item) => (
@@ -92,9 +94,9 @@ export default function Header() {
             className="lg:hidden bg-white shadow-lg"
           >
             <div className="container mx-auto px-4 py-4">
-              <div className="pl-20">
+              <div className="pl-[80px]">
                 {" "}
-                {/* Added padding-left to align with the logo */}
+                {/* Adjust this value to match the logo width */}
                 {menuItems.map((item) => (
                   <Link
                     key={item.name}
