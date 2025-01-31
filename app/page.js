@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import dynamic from "next/dynamic"
+import { Search } from "lucide-react"
 
 const DynamicSlider = dynamic(() => import("react-slick").then((mod) => mod.default), {
   ssr: false,
@@ -12,10 +13,18 @@ const DynamicSlider = dynamic(() => import("react-slick").then((mod) => mod.defa
 
 export default function Home() {
   const [mounted, setMounted] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`
+    }
+  }
 
   const services = [
     {
@@ -123,7 +132,7 @@ export default function Home() {
                 event, or a professional photoshoot, I&apos;m here to enhance your natural beauty and make you feel
                 confident and radiant.
               </p>
-              <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+              <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-6">
                 <Link
                   href="/booking"
                   className="bg-rose-gold text-white px-6 py-3 rounded-full hover:bg-rose-gold-600 transition duration-300 text-base md:text-lg font-semibold font-lato text-center"
@@ -137,6 +146,21 @@ export default function Home() {
                   Explore Gallery
                 </Link>
               </div>
+              <form onSubmit={handleSearch} className="flex items-center">
+                <input
+                  type="text"
+                  placeholder="Search services, gallery, or prices..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-grow px-4 py-2 rounded-l-full border-2 border-rose-gold focus:outline-none focus:border-rose-gold-600"
+                />
+                <button
+                  type="submit"
+                  className="bg-rose-gold text-white px-4 py-2 rounded-r-full hover:bg-rose-gold-600 transition duration-300"
+                >
+                  <Search size={24} />
+                </button>
+              </form>
             </div>
           </div>
         </div>
