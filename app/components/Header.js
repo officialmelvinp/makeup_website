@@ -94,7 +94,7 @@ export default function Header() {
             className="lg:hidden bg-white shadow-lg"
           >
             <div className="container mx-auto px-4 py-4">
-              <div className="pl-[60px]">
+              <div className="pl-[40px]">
                 {" "}
                 {/* Adjust this value to match the logo width */}
                 {menuItems.map((item) => (
